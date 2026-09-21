@@ -1,4 +1,4 @@
-# Nfinite Isaac Bridge
+# Physicl Isaac Bridge
 
 Односторонній міст 3ds Max → NVIDIA Isaac Sim для збірки сцен через USD.
 Немає спільної теки чи таймера — вся домовленість зашита в структуру сцени й імена об'єктів:
@@ -6,8 +6,11 @@
 узгодженою назвою, а розширення в Isaac Sim саме розпізнає ці файли й імена маркерів, щоб
 зібрати сцену назад.
 
-Технічний огляд проєкту: **[awark10.github.io/nfinite-isaac-bridge](https://awark10.github.io/nfinite-isaac-bridge/)**
+Технічний огляд проєкту: **[awark10.github.io/physicl-isaac-bridge](https://awark10.github.io/physicl-isaac-bridge/)**
 (копія лежить у [`docs/overview/`](docs/overview/))
+
+> Студія перейменувалась на **Physicl** (раніше — Nfinite). Файли й код усередині репозиторію ще
+> зберігають стару назву — оновлення заплановане на наступний реліз, див. розділ 02 в overview.
 
 ## Структура
 
