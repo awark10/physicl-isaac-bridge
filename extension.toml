@@ -1,0 +1,14 @@
+[package]
+title = "Aligner & Measure Tool"
+description = "Manual/Auto aligner and IsaacTools with VRay Light Conversion support."
+version = "2.3.0"
+category = "Tools"
+
+[dependencies]
+"omni.ui" = {}
+"omni.usd" = {}
+"omni.kit.commands" = {}
+
+[[python.module]]
+name = "my_aligner"
+path = "."

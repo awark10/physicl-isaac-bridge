@@ -1,0 +1,656 @@
+<title>Nfinite Isaac Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #e2e9e6;
+    --border: #c5d0cc;
+    --border-soft: #d3dcd8;
+    --text: #121a17;
+    --text-muted: #5a6864;
+    --accent: #1f8f73;
+    --accent-2: #2c6fa0;
+    --accent-3: #a8631a;
+    --accent-soft: rgba(31,143,115,0.10);
+    --accent-2-soft: rgba(44,111,160,0.10);
+    --accent-3-soft: rgba(168,99,26,0.12);
+    --mono-bg: #dde4e1;
+    --sem-done: #2f6b46;
+    --sem-pending: #6d6a4d;
+    --sem-limit: #9c5a17;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1513;
+      --surface: #17211e;
+      --border: #24322e;
+      --border-soft: #202c28;
+      --text: #e7ece9;
+      --text-muted: #93a19c;
+      --accent: #44ddaa;
+      --accent-2: #7fc4ff;
+      --accent-3: #ffb066;
+      --accent-soft: rgba(68,221,170,0.14);
+      --accent-2-soft: rgba(127,196,255,0.12);
+      --accent-3-soft: rgba(255,176,102,0.14);
+      --mono-bg: #1b2624;
+      --sem-done: #5fb37e;
+      --sem-pending: #a3a087;
+      --sem-limit: #d99a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1513;
+    --surface: #17211e;
+    --border: #24322e;
+    --border-soft: #202c28;
+    --text: #e7ece9;
+    --text-muted: #93a19c;
+    --accent: #44ddaa;
+    --accent-2: #7fc4ff;
+    --accent-3: #ffb066;
+    --accent-soft: rgba(68,221,170,0.14);
+    --accent-2-soft: rgba(127,196,255,0.12);
+    --accent-3-soft: rgba(255,176,102,0.14);
+    --mono-bg: #1b2624;
+    --sem-done: #5fb37e;
+    --sem-pending: #a3a087;
+    --sem-limit: #d99a4d;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+
+  h1, h2, h3 {
+    font-family: 'Space Grotesk', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    text-wrap: balance;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+
+  a { color: var(--accent); }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding-inline: 24px; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; padding-block: 16px 12px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .brand h1 { font-size: 22px; }
+  .brand .tagline { color: var(--text-muted); font-size: 13px; }
+  .version-badge {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500;
+    color: var(--accent); border: 1px solid var(--accent); background: var(--accent-soft);
+    padding: 4px 9px; border-radius: 2px; white-space: nowrap;
+  }
+  nav.pills {
+    display: flex; gap: 6px; overflow-x: auto; padding-block: 0 12px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  nav.pills::-webkit-scrollbar { display: none; }
+  nav.pills a {
+    flex: 0 0 auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; text-decoration: none;
+    color: var(--text-muted); border: 1px solid var(--border); border-radius: 2px;
+    padding: 5px 10px; white-space: nowrap;
+  }
+  nav.pills a.active { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+  main { padding-block: 8px 40px; }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px; display: block;
+  }
+  .hero { padding-block: 28px 6px; }
+  .hero p.lead { max-width: 62ch; font-size: 17px; color: var(--text); margin: 0; }
+  .hero p.lead code { background: var(--mono-bg); padding: 1px 5px; border-radius: 2px; font-size: 0.92em; }
+
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+    margin-top: 26px; border-radius: 2px; overflow: hidden;
+  }
+  .stat { background: var(--surface); padding: 16px 16px 14px; }
+  .stat .num { font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 26px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat .label { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+
+  hr.rule { border: none; border-top: 1px solid var(--border); margin: 40px 0 0; }
+
+  section.chapter { padding-block: 46px 4px; scroll-margin-top: 96px; }
+  section.chapter .chnum { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-size: 13px; font-weight: 500; }
+  section.chapter h2 { font-size: 30px; margin-top: 8px; }
+  section.chapter .intro { color: var(--text-muted); max-width: 66ch; margin-top: 10px; font-size: 15px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 2px; white-space: nowrap; text-transform: uppercase;
+  }
+  .badge.max { color: var(--accent-2); border: 1px solid var(--accent-2); background: var(--accent-2-soft); }
+  .badge.isaac { background: var(--accent); color: var(--bg); border: 1px solid var(--accent); }
+  .badge.qa { color: var(--accent-3); border: 1px solid var(--accent-3); background: var(--accent-3-soft); }
+
+  /* handoff diagram */
+  .handoff {
+    display: grid; grid-template-columns: 1.05fr 74px 1fr 74px 1.05fr;
+    align-items: stretch; gap: 0; margin-top: 26px;
+  }
+  .handoff .box { background: var(--surface); border: 1px solid var(--border); padding: 16px; }
+  .handoff .box h3 { font-size: 14px; font-family: 'IBM Plex Sans'; font-weight: 600; }
+  .handoff .box .sub { color: var(--text-muted); font-size: 12.5px; margin-top: 4px; }
+  .handoff .hub .mono { display: block; font-size: 12px; line-height: 1.9; margin-top: 10px; white-space: pre; }
+  .handoff .hub .mono b { color: var(--text); font-weight: 500; }
+  .handoff .hub .mono .c { color: var(--text-muted); }
+  .handoff .arrowcell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 2px; text-align: center; }
+  .handoff .arrowcell .glyph { font-size: 20px; color: var(--accent); line-height: 1; }
+  .handoff .arrowcell .cap { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-muted); line-height: 1.35; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); padding: 13px 16px; margin-top: 20px; font-size: 14px; }
+  .callout.qa { border-left-color: var(--accent-3); }
+  .callout b { color: var(--text); }
+
+  .steps { margin-top: 26px; display: flex; flex-direction: column; }
+  .step { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding-block: 16px; border-top: 1px solid var(--border-soft); }
+  .step:first-child { border-top: 1px solid var(--border); }
+  .step .n { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-muted); padding-top: 2px; }
+  .step .head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .step .head h4 { font-family: 'IBM Plex Sans'; font-size: 15px; font-weight: 600; margin: 0; }
+  .step p { margin: 0; color: var(--text-muted); font-size: 14px; max-width: 66ch; }
+  .step code { background: var(--mono-bg); padding: 1px 5px; border-radius: 2px; font-size: 0.9em; color: var(--text); }
+
+  /* name-format block */
+  .fmt-block {
+    margin-top: 24px; background: var(--surface); border: 1px solid var(--border);
+    padding: 18px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; overflow-x: auto;
+  }
+  .fmt-block .tok { color: var(--accent); }
+  .fmt-block .tok2 { color: var(--accent-2); }
+  .fmt-block .tok3 { color: var(--accent-3); }
+  .fmt-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 10px; margin-top: 16px; }
+  .fmt-legend .item { font-size: 13px; color: var(--text-muted); }
+  .fmt-legend .item b { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .fmt-legend .item.a b { color: var(--accent); }
+  .fmt-legend .item.b b { color: var(--accent-2); }
+  .fmt-legend .item.c b { color: var(--accent-3); }
+
+  .effect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 26px; }
+  .effect { background: var(--surface); padding: 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .effect .idx { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-size: 12px; }
+  .effect h4 { font-family: 'IBM Plex Sans'; font-size: 15.5px; font-weight: 600; margin: 0; }
+  .effect p { margin: 0; font-size: 13.5px; color: var(--text-muted); flex: 1; }
+  .effect .params { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); background: var(--mono-bg); padding: 8px 10px; border-radius: 2px; line-height: 1.6; }
+
+  .tbl-wrap { overflow-x: auto; margin-top: 22px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
+  thead th {
+    text-align: left; font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);
+    background: var(--surface); padding: 10px 14px; border-bottom: 1px solid var(--border);
+  }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.code { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--accent); white-space: nowrap; }
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; position: relative; top: -1px; }
+  .status-dot.done { background: var(--sem-done); }
+  .status-dot.pending { background: var(--sem-pending); }
+  .status-dot.limit { background: var(--sem-limit); }
+
+  .quirks { margin-top: 24px; display: flex; flex-direction: column; }
+  .quirk { display: flex; gap: 12px; padding-block: 14px; border-top: 1px solid var(--border-soft); }
+  .quirk:first-child { border-top: 1px solid var(--border); }
+  .quirk .mark { color: var(--accent); font-family: 'IBM Plex Mono', monospace; padding-top: 2px; }
+  .quirk p { margin: 0; font-size: 14.5px; color: var(--text-muted); }
+  .quirk p b { color: var(--text); font-weight: 600; }
+
+  .dist { margin-top: 22px; display: flex; flex-direction: column; gap: 14px; }
+  .dist-item { display: flex; gap: 14px; }
+  .dist-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 8px; flex: 0 0 auto; }
+  .dist-item p { margin: 0; font-size: 14.5px; color: var(--text-muted); }
+  .dist-item p b { color: var(--text); }
+  .dist-item code { background: var(--mono-bg); padding: 1px 5px; border-radius: 2px; font-size: 0.88em; color: var(--text); }
+
+  footer { border-top: 1px solid var(--border); margin-top: 48px; padding-block: 20px 40px; }
+  footer p { margin: 0; font-size: 12.5px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+
+  @media (max-width: 720px) {
+    .handoff { grid-template-columns: 1fr; }
+    .handoff .arrowcell { flex-direction: row; padding: 10px 4px; }
+    .handoff .arrowcell .glyph { transform: rotate(90deg); }
+    .effect-grid { grid-template-columns: 1fr; }
+    .step { grid-template-columns: 28px 1fr; }
+    section.chapter h2 { font-size: 25px; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div class="brand">
+      <h1>Nfinite Isaac Bridge</h1>
+      <span class="tagline">односторонній міст 3ds Max → NVIDIA Isaac Sim для збірки сцен через USD</span>
+    </div>
+    <span class="version-badge">Aligner v8.11 · Tools v1.1.15</span>
+  </div>
+  <div class="wrap">
+    <nav class="pills" id="chapter-nav">
+      <a href="#ch-01" data-n="1">01 Протокол</a>
+      <a href="#ch-02" data-n="2">02 Експорт з Max</a>
+      <a href="#ch-03" data-n="3">03 Світло в імені</a>
+      <a href="#ch-04" data-n="4">04 Маркери ASSET</a>
+      <a href="#ch-05" data-n="5">05 Isaac Sim</a>
+      <a href="#ch-06" data-n="6">06 QA-конвенції</a>
+      <a href="#ch-07" data-n="7">07 Особливості</a>
+      <a href="#ch-08" data-n="8">08 Файли та стан</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">Технічний опис</span>
+    <p class="lead">
+      Nfinite Isaac Bridge переносить сцену з 3ds Max у NVIDIA Isaac Sim через USD. На відміну від
+      живого round-trip зі спільною текою й таймером, тут немає постійного каналу зв'язку — вся
+      домовленість зашита у структуру сцени й імена об'єктів. Кожна категорія (<code>STRUCTURE</code>,
+      <code>ASSET</code>, <code>CAMERA</code>, світло) експортується в окремий <code>.usd</code> за
+      узгодженою назвою, а розширення в Isaac Sim саме розпізнає ці файли й імена маркерів, щоб
+      зібрати сцену назад.
+    </p>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">4</div><div class="label">категорії сцени, кожна у власному .usd — STRUCTURE, ASSET, CAMERA, LIGHT</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">рядок-ім'я кодує тип, яскравість і розмір цілого VRay-світла</div></div>
+      <div class="stat"><div class="num">0.001</div><div class="label">коефіцієнт мм→м, застосовується лише на межі експорту/імпорту</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">розширення на боці Isaac Sim, що запускаються разом</div></div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- 01 -->
+  <section class="chapter" id="ch-01">
+    <span class="chnum">01</span>
+    <h2>Ім'я об'єкта — це протокол</h2>
+    <p class="intro">Немає ні спільної теки, ні опитування файлів. Уся домовленість між Max і Isaac Sim
+    живе в тому, як названо кореневі helper-об'єкти сцени та маркери під ними.</p>
+
+    <div class="handoff">
+      <div class="box">
+        <span class="badge max">3ds Max</span>
+        <h3 style="margin-top:8px">Дерево сцени</h3>
+        <div class="sub">Кореневі helper-и <code>STRUCTURE</code>, <code>ASSET</code>, <code>CAMERA</code> + VRay-світла, перетворені на іменовані маркери.</div>
+      </div>
+      <div class="arrowcell">
+        <span class="glyph">→</span>
+        <span class="cap">4 окремі<br>.usd файли</span>
+      </div>
+      <div class="box hub">
+        <span class="badge" style="color:var(--text-muted);border:1px solid var(--border)">експорт за конвенцією</span>
+        <h3 style="margin-top:8px">*_STRUCTURE / _ASSET / _CAMERA / _LIGHTS.usd</h3>
+        <span class="mono"><b>_STRUCTURE.usd</b>  <span class="c">геометрія, фізичний колайдер</span>
+<b>_ASSET.usd</b>      <span class="c">маркери розміщення активів</span>
+<b>_CAMERA.usd</b>     <span class="c">камери сцени</span>
+<b>_LIGHTS.usd</b>     <span class="c">світло, закодоване в іменах</span></span>
+      </div>
+      <div class="arrowcell">
+        <span class="glyph">→</span>
+        <span class="cap">парсинг імен<br>+ шлях файлу</span>
+      </div>
+      <div class="box">
+        <span class="badge isaac">Isaac Sim</span>
+        <h3 style="margin-top:8px">Scene Bridge & Aligner</h3>
+        <div class="sub">Розкладає кожен файл під <code>/World/&lt;КАТЕГОРІЯ&gt;</code> і декодує маркери назад у реальні прайми.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Канал лише в один бік.</b> Немає зворотного імпорту в Max — це не round-trip, а односторонній
+      конвеєр збірки: підготував у Max, експортував за категоріями, зібрав і донастроїв в Isaac Sim.
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 02 -->
+  <section class="chapter" id="ch-02">
+    <span class="chnum">02</span>
+    <h2>Експорт з Max</h2>
+    <p class="intro">Панель <code>Nfinite Isaac Tools</code> (macroScript <code>IsaacSimTools</code>,
+    категорія «Nfinite») — п'ять кнопок експорту, кожна зі своєю логікою безпеки навколо одиниць
+    виміру та інстансів.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>EXPORT SELECTED MODEL</h4></div>
+          <p>Робить виділені об'єкти унікальними (<code>InstanceMgr.MakeObjectsUnique</code>), за бажанням
+          скидає Material ID на 1 (фікс GeomSubsets), префіксує <code>SM_</code> геометрію й будь-яке
+          ім'я, що починається з цифри — USD не дозволяє цифру першим символом імені прайма.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>STRUCTURE EXPORT…</h4></div>
+          <p>Відкриває діалог вибору (WinForms <code>ListView</code> через <code>dotNetControl</code>) —
+          які дочірні об'єкти вузла <code>STRUCTURE</code> включити. Унікалізує, за потреби скидає
+          Material ID, за потреби масштабує в метри — і лише тоді експортує.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>ASSET POS EXPORT</h4></div>
+          <p>Тимчасово перейменовує маркери <code>*_POS</code> під вузлом <code>ASSET</code>, додаючи
+          назву їхнього прямого предка як суфікс, експортує, потім відновлює оригінальні імена.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">04</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>CAMERA EXPORT</h4></div>
+          <p>Виділяє все піддерево вузла <code>CAMERA</code> й експортує — найпростіший з п'яти шляхів.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">05</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>LIGHT EXPORT (Bridge)</h4></div>
+          <p>Перетворює всі <code>VRayLight</code>/<code>VRaySun</code> сцени на point-helper маркери з
+          закодованим іменем (розділ 03), ховає оригінальні світла, експортує маркери, відновлює сцену.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Force Meters — подвійний захист.</b> <code>chkForceMeters</code> тимчасово перемикає
+      <code>units.SystemType</code> на метри й масштабує лише кореневі трансформи перед експортом.
+      Відкат робиться і вручну (зворотним множенням матриці), і через <code>fetchMaxFile</code> —
+      навмисна надлишковість після минулого бага з «гігантськими об'єктами» (див. розділ 07).
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 03 -->
+  <section class="chapter" id="ch-03">
+    <span class="chnum">03</span>
+    <h2>Світло, закодоване в імені</h2>
+    <p class="intro">USD-типи світла не збігаються з VRay. Замість окремого файлу метаданих тип,
+    яскравість і розмір цілого світла впаковуються прямо в ім'я point-helper-а, який його заміняє
+    на час експорту.</p>
+
+    <div class="fmt-block">_LGT_<span class="tok">&lt;Type&gt;</span>_<span class="tok2">&lt;Intensity×1000&gt;</span>_<span class="tok2">&lt;Dim0&gt;</span>_<span class="tok2">&lt;Dim1&gt;</span>_<span class="tok3">&lt;CleanName&gt;</span>_POS</div>
+    <div class="fmt-legend">
+      <div class="item a"><b>Type</b> — Sphere / Rect / Distant / Dome, визначено з класу VRay-світла</div>
+      <div class="item b"><b>Intensity×1000</b> — multiplier ×1000, ціле число (у назві не буває крапок)</div>
+      <div class="item b"><b>Dim0 / Dim1</b> — розміри (size0/size1 ×2), округлені до цілого</div>
+      <div class="item c"><b>CleanName</b> — оригінальна назва світла без префікса «VRay»</div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>convertVRayLightsAction()</h4></div>
+          <p>Для кожного VRay-світла створює <code>Point()</code> з таким іменем на місці світла, ховає
+          оригінал (<code>isHidden = true</code>), і саме ці маркери йдуть в експорт.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="head"><span class="badge isaac">Isaac</span><h4>inflate_lights_logic()</h4></div>
+          <p>Парсить ім'я кожного <code>_LGT_*_POS</code> маркера назад у справжній <code>UsdLux</code>
+          (Sphere/Rect/Distant/Dome), калібрує під нове середовище: сонце (<code>Distant</code>)
+          підсилюється ×100, отримує м'яку тінь (кут 2.5°) і температуру 5800K; для <code>Dome</code>
+          автоматично шукає HDR/EXR у теці текстур. Якщо в сцені не було жодного Dome — додає дефолтне
+          небо з температурою 8500K.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 04 -->
+  <section class="chapter" id="ch-04">
+    <span class="chnum">04</span>
+    <h2>Маркери розміщення активів</h2>
+    <p class="intro">Той самий трюк із кодуванням в імені, але для розстановки моделей: маркер
+    <code>*_POS</code> несе ID активу, а Isaac Sim сам знаходить відповідний .usd у бібліотеці й
+    підставляє його як дочірній referenced-prim.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="head"><span class="badge max">Max</span><h4>convertAssetHierarchyAction() / restore…()</h4></div>
+          <p>Перед експортом дописує ім'я прямого предка до кожного <code>*_POS</code> (стає
+          <code>*_POS_&lt;parent&gt;</code>), щоб група не загубилась при сплощенні під час експорту.
+          Після експорту — обрізає суфікс назад.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="head"><span class="badge isaac">Isaac</span><h4>auto_populate_logic()</h4></div>
+          <p>Для кожного маркера дістає ID активу з імені, шукає файл <code>&lt;ID&gt;.usd</code> у
+          Library-теці (з нормалізацією <code>-</code> ↔ <code>_</code> у назвах), референсить його як
+          дочірній прайм, примусово ставить identity-масштаб, за бажанням додає корекцію +90° повороту.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">→</div>
+        <div>
+          <div class="head"><span class="badge isaac">Isaac</span><h4>Isaac_Sim_Align_By_Pattern.py</h4></div>
+          <p>Окремий скрипт (не інтегрований у UI розширення): один вибраний об'єкт → копіюється на
+          <i>всі</i> знайдені <code>_POS</code>-цілі; кілька вибраних об'єктів → кожен вирівнюється на
+          ціль з тим самим числовим ID в імені.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>EXPORT MISSING LIST.</b> Якщо для маркера немає відповідного файлу в бібліотеці, ID потрапляє
+      у звіт <code>missing_assets_report.txt</code> на робочому столі, який одразу відкривається.
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 05 -->
+  <section class="chapter" id="ch-05">
+    <span class="chnum">05</span>
+    <h2>Isaac Sim: Scene Bridge & Aligner</h2>
+    <p class="intro">Головне розширення Omniverse (extension <code>Aligner & Measure Tool</code>,
+    <code>my_aligner.py</code>) — вікно «Scene Bridge & Aligner», що при старті вбудовує друге
+    розширення, Model Bridge, як власний підрозділ.</p>
+
+    <div class="effect-grid">
+      <div class="effect">
+        <span class="idx">1 · BRIDGE: SCENE IMPORT</span>
+        <h4>Завантаження за категоріями</h4>
+        <p>Чекбокс на кожен із 4 файлів + кнопки LOAD ALL / RELOAD ALL / RELOAD поштучно. Глобальний
+        перемикач «Apply mm-to-m scale» зберігається в <code>~/.nfinite_bridge_prefs.json</code> і діє
+        для всього конвеєра.</p>
+        <div class="params">/World/STRUCTURE<br>/World/ASSET<br>/World/CAMERA · /World/LIGHT</div>
+      </div>
+      <div class="effect">
+        <span class="idx">2 · AUTO-FIXES</span>
+        <h4>Запускаються самі після завантаження</h4>
+        <p>Кожна категорія тягне за собою свій post-load крок: LIGHT → <code>inflate_lights_logic</code>,
+        ASSET → <code>inflate_assets_logic</code> (перебудова ієрархії з масштабуванням лише
+        translate-компонента), STRUCTURE → <code>fix_glass_shadows_logic</code>.</p>
+        <div class="params">inflate_lights_logic<br>inflate_assets_logic<br>fix_glass_shadows_logic</div>
+      </div>
+      <div class="effect">
+        <span class="idx">3 · MODEL BRIDGE</span>
+        <h4>Вбудований під-інструмент</h4>
+        <p>Окреме вікно для одиничної моделі: завантажує <code>*_MODEL.usd</code>, перелінковує текстури
+        на виділенні, вішає UCX-колайдери, показує вимір трансформу й bbox (мм) з копіюванням у буфер.</p>
+        <div class="params">LOAD MODEL<br>APPLY UCX COLLIDERS<br>MEASURE → COPY ALL</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>SMART AUTO POPULATE</b> і <b>RELINK ALL SCENE TEXTURES</b> працюють на рівні всієї сцени
+      (<code>/World/ASSET</code>), а однойменні кнопки в Model Bridge — лише на поточному виділенні.
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 06 -->
+  <section class="chapter" id="ch-06">
+    <span class="chnum">06</span>
+    <h2>Виробничі домовленості</h2>
+    <p class="intro">Кілька назв-конвенцій, які розпізнаються автоматично й перетворюються на конкретні
+    дії без участі людини.</p>
+
+    <div class="effect-grid">
+      <div class="effect">
+        <span class="idx"><span class="badge qa">QA</span> UCX_*</span>
+        <h4>Фізичний колайдер</h4>
+        <p>Меш з іменем <code>UCX_...</code> отримує <code>UsdPhysics.CollisionAPI</code> +
+        <code>MeshCollisionAPI</code> (<code>convexHull</code>) і ховається з рендеру.</p>
+      </div>
+      <div class="effect">
+        <span class="idx"><span class="badge qa">QA</span> WINDOW_GLASS</span>
+        <h4>Тінь вимкнена</h4>
+        <p><code>fix_glass_shadows_logic</code> ставить <code>primvars:doNotCastShadows = true</code> на
+        всі меші з такою назвою — типова проблема скла в архвіз-сценах.</p>
+      </div>
+      <div class="effect">
+        <span class="idx"><span class="badge qa">QA</span> relink by filename</span>
+        <h4>Перелінк текстур</h4>
+        <p>Той самий трюк, що і в <a href="https://awark10.github.io/substance-bridge/">Substance Bridge</a>:
+        якщо шлях до текстури зламаний, шукає файл з такою ж назвою в бібліотеці й підставляє знайдений шлях.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 07 -->
+  <section class="chapter" id="ch-07">
+    <span class="chnum">07</span>
+    <h2>Особливості та виправлені баги</h2>
+    <p class="intro">Чотири речі, які стали такими не одразу.</p>
+
+    <div class="quirks">
+      <div class="quirk">
+        <div class="mark">—</div>
+        <p><b>«SAFETY REVERT» у назві v1.1.15 — не випадковість.</b> Коментар у коді прямо каже: попередня
+        версія деструктивно міняла одиниці виміру сцени і спричиняла ефект «гігантських об'єктів». Поточна
+        логіка масштабує тільки корені виділення й обов'язково відкочує це вручну.</p>
+      </div>
+      <div class="quirk">
+        <div class="mark">—</div>
+        <p><b>Подвійний відкат масштабу.</b> Після експорту трансформ множиться назад на
+        <code>1/factor</code> вручну, і додатково викликається <code>fetchMaxFile</code> — навмисна
+        надлишковість, а не забутий код.</p>
+      </div>
+      <div class="quirk">
+        <div class="mark">—</div>
+        <p><b>USD не любить цифру на початку імені.</b> Будь-яке геометричне, числове або кореневе ім'я
+        отримує префікс <code>SM_</code> перед експортом моделі — інакше валідний USD-prim не створити.</p>
+      </div>
+      <div class="quirk">
+        <div class="mark">—</div>
+        <p><b>USD міняє дефіс на підкреслення в іменах.</b> На боці Isaac Sim пошук файлу активу нормалізує
+        обидва варіанти (<code>-</code> ↔ <code>_</code>) в один регістр перед звірянням, інакше частина
+        активів «губилась» тільки через пунктуацію в назві файлу.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 08 -->
+  <section class="chapter" id="ch-08">
+    <span class="chnum">08</span>
+    <h2>Файли та поточний стан</h2>
+    <p class="intro">Шість файлів, розкидані по двох програмах, які ніколи не працюють одночасно.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Файл</th><th>Де</th><th>Роль</th></tr></thead>
+        <tbody>
+          <tr><td class="code">Nfinite-IsaacTools_v1.1.ms</td><td>3ds Max</td><td>Основна панель експорту — Model/Structure/Asset/Camera/Light, v1.1.15</td></tr>
+          <tr><td class="code">Export_To_Isaac_Sim.ms</td><td>3ds Max</td><td>Простіший загальний USD-експорт + автовстановлення Autodesk USD плагіна</td></tr>
+          <tr><td class="code">my_aligner.py</td><td>Isaac Sim</td><td>Розширення «Scene Bridge & Aligner», v8.11.0</td></tr>
+          <tr><td class="code">Nfnt_Model_To_Isaac_Bridge.py</td><td>Isaac Sim</td><td>Вбудований під-інструмент — одна модель, текстури, UCX, вимір</td></tr>
+          <tr><td class="code">Isaac_Sim_Align_By_Pattern.py</td><td>Isaac Sim</td><td>Окремий скрипт вирівнювання за numeric ID, поза UI розширення</td></tr>
+          <tr><td class="code">extension.toml</td><td>Isaac Sim</td><td>Маніфест розширення «Aligner & Measure Tool», v2.3.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top:30px">
+      <table>
+        <thead><tr><th>Стан</th><th>Що саме</th></tr></thead>
+        <tbody>
+          <tr><td><span class="status-dot done"></span>Готово</td><td>Категорійний експорт STRUCTURE/ASSET/CAMERA/LIGHT з панелі Max</td></tr>
+          <tr><td><span class="status-dot done"></span>Готово</td><td>Кодування VRay-світла в імені + декодування назад у UsdLux</td></tr>
+          <tr><td><span class="status-dot done"></span>Готово</td><td>Auto Populate активів за бібліотекою, з нормалізацією імен</td></tr>
+          <tr><td><span class="status-dot done"></span>Готово</td><td>UCX-колайдери, вимкнення тіні скла, перелінк текстур</td></tr>
+          <tr><td><span class="status-dot done"></span>Готово</td><td>Model Bridge — одинична модель, вимір трансформу й bbox</td></tr>
+          <tr><td><span class="status-dot pending"></span>Не інтегровано</td><td>Isaac_Sim_Align_By_Pattern.py — досі окремий скрипт, не кнопка в UI</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <footer>
+    <p>Nfinite Isaac Bridge · внутрішній інструмент · документ станом на 21 вересня 2026</p>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('#chapter-nav a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var idx = sections.indexOf(entry.target);
+      if (idx === -1) return;
+      if (entry.isIntersecting) {
+        links.forEach(function(l){ l.classList.remove('active'); });
+        links[idx].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+  sections.forEach(function(s){ if (s) io.observe(s); });
+})();
+</script>
