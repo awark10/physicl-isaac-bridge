@@ -252,20 +252,20 @@
   <div class="wrap top-row">
     <div class="brand">
       <h1>Physicl Isaac Bridge</h1>
-      <span class="tagline">односторонній міст 3ds Max → NVIDIA Isaac Sim для збірки сцен через USD</span>
+      <span class="tagline">a one-way bridge from 3ds Max to NVIDIA Isaac Sim for scene assembly via USD</span>
     </div>
     <span class="version-badge">Aligner v8.11 · Tools v1.1.15</span>
   </div>
   <div class="wrap">
     <nav class="pills" id="chapter-nav">
-      <a href="#ch-01" data-n="1">01 Протокол</a>
-      <a href="#ch-02" data-n="2">02 Експорт з Max</a>
-      <a href="#ch-03" data-n="3">03 Світло в імені</a>
-      <a href="#ch-04" data-n="4">04 Маркери ASSET</a>
+      <a href="#ch-01" data-n="1">01 The Protocol</a>
+      <a href="#ch-02" data-n="2">02 Export from Max</a>
+      <a href="#ch-03" data-n="3">03 Light in a Name</a>
+      <a href="#ch-04" data-n="4">04 ASSET Markers</a>
       <a href="#ch-05" data-n="5">05 Isaac Sim</a>
-      <a href="#ch-06" data-n="6">06 QA-конвенції</a>
-      <a href="#ch-07" data-n="7">07 Особливості</a>
-      <a href="#ch-08" data-n="8">08 Файли та стан</a>
+      <a href="#ch-06" data-n="6">06 QA Conventions</a>
+      <a href="#ch-07" data-n="7">07 Quirks</a>
+      <a href="#ch-08" data-n="8">08 Files & State</a>
     </nav>
   </div>
 </header>
@@ -273,20 +273,20 @@
 <main class="wrap">
 
   <div class="hero">
-    <span class="eyebrow">Технічний опис</span>
+    <span class="eyebrow">Technical description</span>
     <p class="lead">
-      Physicl Isaac Bridge переносить сцену з 3ds Max у NVIDIA Isaac Sim через USD. На відміну від
-      живого round-trip зі спільною текою й таймером, тут немає постійного каналу зв'язку — вся
-      домовленість зашита у структуру сцени й імена об'єктів. Кожна категорія (<code>STRUCTURE</code>,
-      <code>ASSET</code>, <code>CAMERA</code>, світло) експортується в окремий <code>.usd</code> за
-      узгодженою назвою, а розширення в Isaac Sim саме розпізнає ці файли й імена маркерів, щоб
-      зібрати сцену назад.
+      Physicl Isaac Bridge moves a scene from 3ds Max into NVIDIA Isaac Sim through USD. Unlike a
+      live round trip with a shared folder and a timer, there's no persistent connection here — the
+      whole agreement is baked into the scene's structure and object names. Each category
+      (<code>STRUCTURE</code>, <code>ASSET</code>, <code>CAMERA</code>, lights) exports to its own
+      <code>.usd</code> under an agreed name, and the extension in Isaac Sim recognizes those files
+      and marker names on its own to reassemble the scene.
     </p>
     <div class="stat-grid">
-      <div class="stat"><div class="num">4</div><div class="label">категорії сцени, кожна у власному .usd — STRUCTURE, ASSET, CAMERA, LIGHT</div></div>
-      <div class="stat"><div class="num">1</div><div class="label">рядок-ім'я кодує тип, яскравість і розмір цілого VRay-світла</div></div>
-      <div class="stat"><div class="num">0.001</div><div class="label">коефіцієнт мм→м, застосовується лише на межі експорту/імпорту</div></div>
-      <div class="stat"><div class="num">2</div><div class="label">розширення на боці Isaac Sim, що запускаються разом</div></div>
+      <div class="stat"><div class="num">4</div><div class="label">scene categories, each in its own .usd — STRUCTURE, ASSET, CAMERA, LIGHT</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">name string encodes an entire VRay light's type, intensity and size</div></div>
+      <div class="stat"><div class="num">0.001</div><div class="label">mm-to-m factor, applied only at the export/import boundary</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">extensions on the Isaac Sim side that launch together</div></div>
     </div>
   </div>
 
@@ -295,42 +295,42 @@
   <!-- 01 -->
   <section class="chapter" id="ch-01">
     <span class="chnum">01</span>
-    <h2>Ім'я об'єкта — це протокол</h2>
-    <p class="intro">Немає ні спільної теки, ні опитування файлів. Уся домовленість між Max і Isaac Sim
-    живе в тому, як названо кореневі helper-об'єкти сцени та маркери під ними.</p>
+    <h2>An object's name is the protocol</h2>
+    <p class="intro">There's no shared folder, no file polling. The entire agreement between Max and
+    Isaac Sim lives in how the scene's root helper objects and the markers under them are named.</p>
 
     <div class="handoff">
       <div class="box">
         <span class="badge max">3ds Max</span>
-        <h3 style="margin-top:8px">Дерево сцени</h3>
-        <div class="sub">Кореневі helper-и <code>STRUCTURE</code>, <code>ASSET</code>, <code>CAMERA</code> + VRay-світла, перетворені на іменовані маркери.</div>
+        <h3 style="margin-top:8px">Scene tree</h3>
+        <div class="sub">Root helpers <code>STRUCTURE</code>, <code>ASSET</code>, <code>CAMERA</code> + VRay lights, turned into named markers.</div>
       </div>
       <div class="arrowcell">
         <span class="glyph">→</span>
-        <span class="cap">4 окремі<br>.usd файли</span>
+        <span class="cap">4 separate<br>.usd files</span>
       </div>
       <div class="box hub">
-        <span class="badge" style="color:var(--text-muted);border:1px solid var(--border)">експорт за конвенцією</span>
+        <span class="badge" style="color:var(--text-muted);border:1px solid var(--border)">export by convention</span>
         <h3 style="margin-top:8px">*_STRUCTURE / _ASSET / _CAMERA / _LIGHTS.usd</h3>
-        <span class="mono"><b>_STRUCTURE.usd</b>  <span class="c">геометрія, фізичний колайдер</span>
-<b>_ASSET.usd</b>      <span class="c">маркери розміщення активів</span>
-<b>_CAMERA.usd</b>     <span class="c">камери сцени</span>
-<b>_LIGHTS.usd</b>     <span class="c">світло, закодоване в іменах</span></span>
+        <span class="mono"><b>_STRUCTURE.usd</b>  <span class="c">geometry, physics collider</span>
+<b>_ASSET.usd</b>      <span class="c">asset placement markers</span>
+<b>_CAMERA.usd</b>     <span class="c">scene cameras</span>
+<b>_LIGHTS.usd</b>     <span class="c">lights, encoded in names</span></span>
       </div>
       <div class="arrowcell">
         <span class="glyph">→</span>
-        <span class="cap">парсинг імен<br>+ шлях файлу</span>
+        <span class="cap">parses names<br>+ file path</span>
       </div>
       <div class="box">
         <span class="badge isaac">Isaac Sim</span>
         <h3 style="margin-top:8px">Scene Bridge & Aligner</h3>
-        <div class="sub">Розкладає кожен файл під <code>/World/&lt;КАТЕГОРІЯ&gt;</code> і декодує маркери назад у реальні прайми.</div>
+        <div class="sub">Lays out each file under <code>/World/&lt;CATEGORY&gt;</code> and decodes the markers back into real prims.</div>
       </div>
     </div>
 
     <div class="callout">
-      <b>Канал лише в один бік.</b> Немає зворотного імпорту в Max — це не round-trip, а односторонній
-      конвеєр збірки: підготував у Max, експортував за категоріями, зібрав і донастроїв в Isaac Sim.
+      <b>One-way channel only.</b> There's no import back into Max — this isn't a round trip, it's a
+      one-way assembly pipeline: prepare in Max, export by category, assemble and tune in Isaac Sim.
     </div>
   </section>
 
@@ -339,61 +339,63 @@
   <!-- 02 -->
   <section class="chapter" id="ch-02">
     <span class="chnum">02</span>
-    <h2>Експорт з Max</h2>
-    <p class="intro">Панель <code>Nfinite Isaac Tools</code> (macroScript <code>IsaacSimTools</code>,
-    категорія «Nfinite») — п'ять кнопок експорту, кожна зі своєю логікою безпеки навколо одиниць
-    виміру та інстансів. <i>Студія відтоді перейменувалась на Physicl — назви в самому коді (категорія,
-    заголовок панелі, префікси файлів) ще не оновлені й лишаються «Nfinite» до наступного релізу.</i></p>
+    <h2>Export from Max</h2>
+    <p class="intro">The <code>Nfinite Isaac Tools</code> panel (macroScript <code>IsaacSimTools</code>,
+    category "Nfinite") — five export buttons, each with its own safety logic around units and
+    instances. <i>The studio has since renamed itself to Physicl — the names inside the code itself
+    (the category, the panel title, file prefixes) haven't been updated yet and stay "Nfinite" until
+    the next release.</i></p>
 
     <div class="steps">
       <div class="step">
         <div class="n">01</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>EXPORT SELECTED MODEL</h4></div>
-          <p>Робить виділені об'єкти унікальними (<code>InstanceMgr.MakeObjectsUnique</code>), за бажанням
-          скидає Material ID на 1 (фікс GeomSubsets), префіксує <code>SM_</code> геометрію й будь-яке
-          ім'я, що починається з цифри — USD не дозволяє цифру першим символом імені прайма.</p>
+          <p>Makes the selected objects unique (<code>InstanceMgr.MakeObjectsUnique</code>), optionally
+          resets Material ID to 1 (fixes GeomSubsets), prefixes <code>SM_</code> onto geometry and any
+          name starting with a digit — USD doesn't allow a digit as a prim name's first character.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">02</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>STRUCTURE EXPORT…</h4></div>
-          <p>Відкриває діалог вибору (WinForms <code>ListView</code> через <code>dotNetControl</code>) —
-          які дочірні об'єкти вузла <code>STRUCTURE</code> включити. Унікалізує, за потреби скидає
-          Material ID, за потреби масштабує в метри — і лише тоді експортує.</p>
+          <p>Opens a picker dialog (a WinForms <code>ListView</code> via <code>dotNetControl</code>) —
+          which children of the <code>STRUCTURE</code> node to include. Makes them unique, optionally
+          resets Material ID, optionally scales to meters — only then exports.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">03</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>ASSET POS EXPORT</h4></div>
-          <p>Тимчасово перейменовує маркери <code>*_POS</code> під вузлом <code>ASSET</code>, додаючи
-          назву їхнього прямого предка як суфікс, експортує, потім відновлює оригінальні імена.</p>
+          <p>Temporarily renames the <code>*_POS</code> markers under the <code>ASSET</code> node,
+          appending their direct parent's name as a suffix, exports, then restores the original names.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">04</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>CAMERA EXPORT</h4></div>
-          <p>Виділяє все піддерево вузла <code>CAMERA</code> й експортує — найпростіший з п'яти шляхів.</p>
+          <p>Selects the entire <code>CAMERA</code> node subtree and exports — the simplest of the five paths.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">05</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>LIGHT EXPORT (Bridge)</h4></div>
-          <p>Перетворює всі <code>VRayLight</code>/<code>VRaySun</code> сцени на point-helper маркери з
-          закодованим іменем (розділ 03), ховає оригінальні світла, експортує маркери, відновлює сцену.</p>
+          <p>Converts every <code>VRayLight</code>/<code>VRaySun</code> in the scene into point-helper
+          markers with an encoded name (chapter 03), hides the original lights, exports the markers,
+          restores the scene.</p>
         </div>
       </div>
     </div>
 
     <div class="callout">
-      <b>Force Meters — подвійний захист.</b> <code>chkForceMeters</code> тимчасово перемикає
-      <code>units.SystemType</code> на метри й масштабує лише кореневі трансформи перед експортом.
-      Відкат робиться і вручну (зворотним множенням матриці), і через <code>fetchMaxFile</code> —
-      навмисна надлишковість після минулого бага з «гігантськими об'єктами» (див. розділ 07).
+      <b>Force Meters — double protection.</b> <code>chkForceMeters</code> temporarily switches
+      <code>units.SystemType</code> to meters and scales only the root transforms before export. The
+      revert happens both manually (multiplying the matrix back) and through <code>fetchMaxFile</code>
+      — deliberate redundancy after a past bug with "gigantic objects" (see chapter 07).
     </div>
   </section>
 
@@ -402,17 +404,17 @@
   <!-- 03 -->
   <section class="chapter" id="ch-03">
     <span class="chnum">03</span>
-    <h2>Світло, закодоване в імені</h2>
-    <p class="intro">USD-типи світла не збігаються з VRay. Замість окремого файлу метаданих тип,
-    яскравість і розмір цілого світла впаковуються прямо в ім'я point-helper-а, який його заміняє
-    на час експорту.</p>
+    <h2>Light, encoded in a name</h2>
+    <p class="intro">USD's light types don't match VRay's. Instead of a separate metadata file, an
+    entire light's type, intensity and size get packed straight into the name of the point-helper
+    that stands in for it during export.</p>
 
     <div class="fmt-block">_LGT_<span class="tok">&lt;Type&gt;</span>_<span class="tok2">&lt;Intensity×1000&gt;</span>_<span class="tok2">&lt;Dim0&gt;</span>_<span class="tok2">&lt;Dim1&gt;</span>_<span class="tok3">&lt;CleanName&gt;</span>_POS</div>
     <div class="fmt-legend">
-      <div class="item a"><b>Type</b> — Sphere / Rect / Distant / Dome, визначено з класу VRay-світла</div>
-      <div class="item b"><b>Intensity×1000</b> — multiplier ×1000, ціле число (у назві не буває крапок)</div>
-      <div class="item b"><b>Dim0 / Dim1</b> — розміри (size0/size1 ×2), округлені до цілого</div>
-      <div class="item c"><b>CleanName</b> — оригінальна назва світла без префікса «VRay»</div>
+      <div class="item a"><b>Type</b> — Sphere / Rect / Distant / Dome, taken from the VRay light's class</div>
+      <div class="item b"><b>Intensity×1000</b> — the multiplier ×1000, an integer (names can't hold dots)</div>
+      <div class="item b"><b>Dim0 / Dim1</b> — dimensions (size0/size1 ×2), rounded to an integer</div>
+      <div class="item c"><b>CleanName</b> — the light's original name with the "VRay" prefix stripped</div>
     </div>
 
     <div class="steps">
@@ -420,19 +422,19 @@
         <div class="n">→</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>convertVRayLightsAction()</h4></div>
-          <p>Для кожного VRay-світла створює <code>Point()</code> з таким іменем на місці світла, ховає
-          оригінал (<code>isHidden = true</code>), і саме ці маркери йдуть в експорт.</p>
+          <p>For every VRay light, creates a <code>Point()</code> with this name in the light's place,
+          hides the original (<code>isHidden = true</code>), and it's these markers that go into the export.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">→</div>
         <div>
           <div class="head"><span class="badge isaac">Isaac</span><h4>inflate_lights_logic()</h4></div>
-          <p>Парсить ім'я кожного <code>_LGT_*_POS</code> маркера назад у справжній <code>UsdLux</code>
-          (Sphere/Rect/Distant/Dome), калібрує під нове середовище: сонце (<code>Distant</code>)
-          підсилюється ×100, отримує м'яку тінь (кут 2.5°) і температуру 5800K; для <code>Dome</code>
-          автоматично шукає HDR/EXR у теці текстур. Якщо в сцені не було жодного Dome — додає дефолтне
-          небо з температурою 8500K.</p>
+          <p>Parses every <code>_LGT_*_POS</code> marker's name back into a real <code>UsdLux</code>
+          (Sphere/Rect/Distant/Dome), calibrates it for the new environment: the sun
+          (<code>Distant</code>) gets boosted ×100, a soft shadow (2.5° angle) and 5800K color
+          temperature; for <code>Dome</code> it auto-searches the textures folder for an HDR/EXR.
+          If the scene had no Dome at all, it adds a default sky at 8500K.</p>
         </div>
       </div>
     </div>
@@ -443,44 +445,45 @@
   <!-- 04 -->
   <section class="chapter" id="ch-04">
     <span class="chnum">04</span>
-    <h2>Маркери розміщення активів</h2>
-    <p class="intro">Той самий трюк із кодуванням в імені, але для розстановки моделей: маркер
-    <code>*_POS</code> несе ID активу, а Isaac Sim сам знаходить відповідний .usd у бібліотеці й
-    підставляє його як дочірній referenced-prim.</p>
+    <h2>Asset placement markers</h2>
+    <p class="intro">The same name-encoding trick, but for placing models: a <code>*_POS</code> marker
+    carries an asset ID, and Isaac Sim finds the matching .usd in a library on its own and references
+    it in.</p>
 
     <div class="steps">
       <div class="step">
         <div class="n">→</div>
         <div>
           <div class="head"><span class="badge max">Max</span><h4>convertAssetHierarchyAction() / restore…()</h4></div>
-          <p>Перед експортом дописує ім'я прямого предка до кожного <code>*_POS</code> (стає
-          <code>*_POS_&lt;parent&gt;</code>), щоб група не загубилась при сплощенні під час експорту.
-          Після експорту — обрізає суфікс назад.</p>
+          <p>Before export, appends the direct parent's name to every <code>*_POS</code> (becomes
+          <code>*_POS_&lt;parent&gt;</code>), so the group isn't lost when the hierarchy flattens on
+          export. After export — trims the suffix back off.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">→</div>
         <div>
           <div class="head"><span class="badge isaac">Isaac</span><h4>auto_populate_logic()</h4></div>
-          <p>Для кожного маркера дістає ID активу з імені, шукає файл <code>&lt;ID&gt;.usd</code> у
-          Library-теці (з нормалізацією <code>-</code> ↔ <code>_</code> у назвах), референсить його як
-          дочірній прайм, примусово ставить identity-масштаб, за бажанням додає корекцію +90° повороту.</p>
+          <p>For every marker, pulls the asset ID out of its name, looks for a file
+          <code>&lt;ID&gt;.usd</code> in the Library folder (normalizing <code>-</code> ↔ <code>_</code>
+          in names), references it in as a child prim, forces an identity scale, optionally adds a
+          +90° rotation correction.</p>
         </div>
       </div>
       <div class="step">
         <div class="n">→</div>
         <div>
           <div class="head"><span class="badge isaac">Isaac</span><h4>Isaac_Sim_Align_By_Pattern.py</h4></div>
-          <p>Окремий скрипт (не інтегрований у UI розширення): один вибраний об'єкт → копіюється на
-          <i>всі</i> знайдені <code>_POS</code>-цілі; кілька вибраних об'єктів → кожен вирівнюється на
-          ціль з тим самим числовим ID в імені.</p>
+          <p>A separate script (not wired into the extension's UI): one selected object → duplicated
+          onto <i>every</i> <code>_POS</code> target found; several selected objects → each aligned to
+          the target sharing its numeric ID in the name.</p>
         </div>
       </div>
     </div>
 
     <div class="callout">
-      <b>EXPORT MISSING LIST.</b> Якщо для маркера немає відповідного файлу в бібліотеці, ID потрапляє
-      у звіт <code>missing_assets_report.txt</code> на робочому столі, який одразу відкривається.
+      <b>EXPORT MISSING LIST.</b> If a marker has no matching file in the library, its ID lands in a
+      <code>missing_assets_report.txt</code> on the desktop, which opens automatically.
     </div>
   </section>
 
@@ -490,39 +493,41 @@
   <section class="chapter" id="ch-05">
     <span class="chnum">05</span>
     <h2>Isaac Sim: Scene Bridge & Aligner</h2>
-    <p class="intro">Головне розширення Omniverse (extension <code>Aligner & Measure Tool</code>,
-    <code>my_aligner.py</code>) — вікно «Scene Bridge & Aligner», що при старті вбудовує друге
-    розширення, Model Bridge, як власний підрозділ.</p>
+    <p class="intro">The main Omniverse extension (the <code>Aligner & Measure Tool</code> extension,
+    <code>my_aligner.py</code>) — the "Scene Bridge & Aligner" window, which on startup embeds a
+    second extension, Model Bridge, as its own subsection.</p>
 
     <div class="effect-grid">
       <div class="effect">
         <span class="idx">1 · BRIDGE: SCENE IMPORT</span>
-        <h4>Завантаження за категоріями</h4>
-        <p>Чекбокс на кожен із 4 файлів + кнопки LOAD ALL / RELOAD ALL / RELOAD поштучно. Глобальний
-        перемикач «Apply mm-to-m scale» зберігається в <code>~/.nfinite_bridge_prefs.json</code> і діє
-        для всього конвеєра.</p>
+        <h4>Loading by category</h4>
+        <p>A checkbox for each of the 4 files plus LOAD ALL / RELOAD ALL / per-file RELOAD buttons.
+        The global "Apply mm-to-m scale" toggle is saved to <code>~/.nfinite_bridge_prefs.json</code>
+        and applies across the whole pipeline.</p>
         <div class="params">/World/STRUCTURE<br>/World/ASSET<br>/World/CAMERA · /World/LIGHT</div>
       </div>
       <div class="effect">
         <span class="idx">2 · AUTO-FIXES</span>
-        <h4>Запускаються самі після завантаження</h4>
-        <p>Кожна категорія тягне за собою свій post-load крок: LIGHT → <code>inflate_lights_logic</code>,
-        ASSET → <code>inflate_assets_logic</code> (перебудова ієрархії з масштабуванням лише
-        translate-компонента), STRUCTURE → <code>fix_glass_shadows_logic</code>.</p>
+        <h4>Run on their own after loading</h4>
+        <p>Each category triggers its own post-load step: LIGHT → <code>inflate_lights_logic</code>,
+        ASSET → <code>inflate_assets_logic</code> (rebuilds the hierarchy, scaling only the
+        translate component), STRUCTURE → <code>fix_glass_shadows_logic</code>.</p>
         <div class="params">inflate_lights_logic<br>inflate_assets_logic<br>fix_glass_shadows_logic</div>
       </div>
       <div class="effect">
         <span class="idx">3 · MODEL BRIDGE</span>
-        <h4>Вбудований під-інструмент</h4>
-        <p>Окреме вікно для одиничної моделі: завантажує <code>*_MODEL.usd</code>, перелінковує текстури
-        на виділенні, вішає UCX-колайдери, показує вимір трансформу й bbox (мм) з копіюванням у буфер.</p>
+        <h4>An embedded sub-tool</h4>
+        <p>A separate window for a single model: loads <code>*_MODEL.usd</code>, relinks textures on
+        the current selection, tags UCX colliders, shows the transform and bbox measurement (mm) with
+        copy-to-clipboard.</p>
         <div class="params">LOAD MODEL<br>APPLY UCX COLLIDERS<br>MEASURE → COPY ALL</div>
       </div>
     </div>
 
     <div class="callout">
-      <b>SMART AUTO POPULATE</b> і <b>RELINK ALL SCENE TEXTURES</b> працюють на рівні всієї сцени
-      (<code>/World/ASSET</code>), а однойменні кнопки в Model Bridge — лише на поточному виділенні.
+      <b>SMART AUTO POPULATE</b> and <b>RELINK ALL SCENE TEXTURES</b> operate on the whole scene
+      (<code>/World/ASSET</code>), while the same-named buttons in Model Bridge act only on the
+      current selection.
     </div>
   </section>
 
@@ -531,28 +536,29 @@
   <!-- 06 -->
   <section class="chapter" id="ch-06">
     <span class="chnum">06</span>
-    <h2>Виробничі домовленості</h2>
-    <p class="intro">Кілька назв-конвенцій, які розпізнаються автоматично й перетворюються на конкретні
-    дії без участі людини.</p>
+    <h2>Production conventions</h2>
+    <p class="intro">A handful of naming conventions that get recognized automatically and turn into
+    concrete actions without anyone lifting a finger.</p>
 
     <div class="effect-grid">
       <div class="effect">
         <span class="idx"><span class="badge qa">QA</span> UCX_*</span>
-        <h4>Фізичний колайдер</h4>
-        <p>Меш з іменем <code>UCX_...</code> отримує <code>UsdPhysics.CollisionAPI</code> +
-        <code>MeshCollisionAPI</code> (<code>convexHull</code>) і ховається з рендеру.</p>
+        <h4>Physics collider</h4>
+        <p>A mesh named <code>UCX_...</code> gets <code>UsdPhysics.CollisionAPI</code> +
+        <code>MeshCollisionAPI</code> (<code>convexHull</code>) and is hidden from render.</p>
       </div>
       <div class="effect">
         <span class="idx"><span class="badge qa">QA</span> WINDOW_GLASS</span>
-        <h4>Тінь вимкнена</h4>
-        <p><code>fix_glass_shadows_logic</code> ставить <code>primvars:doNotCastShadows = true</code> на
-        всі меші з такою назвою — типова проблема скла в архвіз-сценах.</p>
+        <h4>Shadow disabled</h4>
+        <p><code>fix_glass_shadows_logic</code> sets <code>primvars:doNotCastShadows = true</code> on
+        every mesh with that name — a common glass problem in archviz scenes.</p>
       </div>
       <div class="effect">
         <span class="idx"><span class="badge qa">QA</span> relink by filename</span>
-        <h4>Перелінк текстур</h4>
-        <p>Той самий трюк, що і в <a href="https://awark10.github.io/substance-bridge/">Substance Bridge</a>:
-        якщо шлях до текстури зламаний, шукає файл з такою ж назвою в бібліотеці й підставляє знайдений шлях.</p>
+        <h4>Texture relinking</h4>
+        <p>The same trick as in <a href="https://awark10.github.io/substance-bridge/">Substance Bridge</a>:
+        if a texture path is broken, it looks for a file with the same name in the library and
+        substitutes in the path it finds.</p>
       </div>
     </div>
   </section>
@@ -562,32 +568,34 @@
   <!-- 07 -->
   <section class="chapter" id="ch-07">
     <span class="chnum">07</span>
-    <h2>Особливості та виправлені баги</h2>
-    <p class="intro">Чотири речі, які стали такими не одразу.</p>
+    <h2>Quirks and fixed bugs</h2>
+    <p class="intro">Four things that didn't get this way on the first try.</p>
 
     <div class="quirks">
       <div class="quirk">
         <div class="mark">—</div>
-        <p><b>«SAFETY REVERT» у назві v1.1.15 — не випадковість.</b> Коментар у коді прямо каже: попередня
-        версія деструктивно міняла одиниці виміру сцени і спричиняла ефект «гігантських об'єктів». Поточна
-        логіка масштабує тільки корені виділення й обов'язково відкочує це вручну.</p>
+        <p><b>The "SAFETY REVERT" in the v1.1.15 name isn't an accident.</b> A comment in the code says
+        outright: the previous version destructively changed the scene's units and caused the
+        "gigantic objects" effect. The current logic scales only the roots of the selection and always
+        reverts it manually.</p>
       </div>
       <div class="quirk">
         <div class="mark">—</div>
-        <p><b>Подвійний відкат масштабу.</b> Після експорту трансформ множиться назад на
-        <code>1/factor</code> вручну, і додатково викликається <code>fetchMaxFile</code> — навмисна
-        надлишковість, а не забутий код.</p>
+        <p><b>Double scale revert.</b> After export, the transform is manually multiplied back by
+        <code>1/factor</code>, and <code>fetchMaxFile</code> is called on top — deliberate redundancy,
+        not leftover code.</p>
       </div>
       <div class="quirk">
         <div class="mark">—</div>
-        <p><b>USD не любить цифру на початку імені.</b> Будь-яке геометричне, числове або кореневе ім'я
-        отримує префікс <code>SM_</code> перед експортом моделі — інакше валідний USD-prim не створити.</p>
+        <p><b>USD doesn't like a digit at the start of a name.</b> Any geometry, numeric, or root-level
+        name gets an <code>SM_</code> prefix before model export — otherwise a valid USD prim can't be
+        created.</p>
       </div>
       <div class="quirk">
         <div class="mark">—</div>
-        <p><b>USD міняє дефіс на підкреслення в іменах.</b> На боці Isaac Sim пошук файлу активу нормалізує
-        обидва варіанти (<code>-</code> ↔ <code>_</code>) в один регістр перед звірянням, інакше частина
-        активів «губилась» тільки через пунктуацію в назві файлу.</p>
+        <p><b>USD turns hyphens into underscores in names.</b> On the Isaac Sim side, the asset-file
+        lookup normalizes both variants (<code>-</code> ↔ <code>_</code>) to one case before comparing
+        — otherwise some assets would get "lost" purely over punctuation in a filename.</p>
       </div>
     </div>
   </section>
@@ -597,33 +605,33 @@
   <!-- 08 -->
   <section class="chapter" id="ch-08">
     <span class="chnum">08</span>
-    <h2>Файли та поточний стан</h2>
-    <p class="intro">Шість файлів, розкидані по двох програмах, які ніколи не працюють одночасно.</p>
+    <h2>Files and current state</h2>
+    <p class="intro">Six files spread across two applications that never run at the same time.</p>
 
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Файл</th><th>Де</th><th>Роль</th></tr></thead>
+        <thead><tr><th>File</th><th>Where</th><th>Role</th></tr></thead>
         <tbody>
-          <tr><td class="code">Nfinite-IsaacTools_v1.1.ms</td><td>3ds Max</td><td>Основна панель експорту — Model/Structure/Asset/Camera/Light, v1.1.15</td></tr>
-          <tr><td class="code">Export_To_Isaac_Sim.ms</td><td>3ds Max</td><td>Простіший загальний USD-експорт + автовстановлення Autodesk USD плагіна</td></tr>
-          <tr><td class="code">my_aligner.py</td><td>Isaac Sim</td><td>Розширення «Scene Bridge & Aligner», v8.11.0</td></tr>
-          <tr><td class="code">Nfnt_Model_To_Isaac_Bridge.py</td><td>Isaac Sim</td><td>Вбудований під-інструмент — одна модель, текстури, UCX, вимір</td></tr>
-          <tr><td class="code">Isaac_Sim_Align_By_Pattern.py</td><td>Isaac Sim</td><td>Окремий скрипт вирівнювання за numeric ID, поза UI розширення</td></tr>
-          <tr><td class="code">extension.toml</td><td>Isaac Sim</td><td>Маніфест розширення «Aligner & Measure Tool», v2.3.0</td></tr>
+          <tr><td class="code">Nfinite-IsaacTools_v1.1.ms</td><td>3ds Max</td><td>Main export panel — Model/Structure/Asset/Camera/Light, v1.1.15</td></tr>
+          <tr><td class="code">Export_To_Isaac_Sim.ms</td><td>3ds Max</td><td>Simpler generic USD export + auto-installs the Autodesk USD plugin</td></tr>
+          <tr><td class="code">my_aligner.py</td><td>Isaac Sim</td><td>The "Scene Bridge & Aligner" extension, v8.11.0</td></tr>
+          <tr><td class="code">Nfnt_Model_To_Isaac_Bridge.py</td><td>Isaac Sim</td><td>Embedded sub-tool — single model, textures, UCX, measurement</td></tr>
+          <tr><td class="code">Isaac_Sim_Align_By_Pattern.py</td><td>Isaac Sim</td><td>Standalone alignment-by-numeric-ID script, outside the extension UI</td></tr>
+          <tr><td class="code">extension.toml</td><td>Isaac Sim</td><td>"Aligner & Measure Tool" extension manifest, v2.3.0</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="tbl-wrap" style="margin-top:30px">
       <table>
-        <thead><tr><th>Стан</th><th>Що саме</th></tr></thead>
+        <thead><tr><th>State</th><th>What exactly</th></tr></thead>
         <tbody>
-          <tr><td><span class="status-dot done"></span>Готово</td><td>Категорійний експорт STRUCTURE/ASSET/CAMERA/LIGHT з панелі Max</td></tr>
-          <tr><td><span class="status-dot done"></span>Готово</td><td>Кодування VRay-світла в імені + декодування назад у UsdLux</td></tr>
-          <tr><td><span class="status-dot done"></span>Готово</td><td>Auto Populate активів за бібліотекою, з нормалізацією імен</td></tr>
-          <tr><td><span class="status-dot done"></span>Готово</td><td>UCX-колайдери, вимкнення тіні скла, перелінк текстур</td></tr>
-          <tr><td><span class="status-dot done"></span>Готово</td><td>Model Bridge — одинична модель, вимір трансформу й bbox</td></tr>
-          <tr><td><span class="status-dot pending"></span>Не інтегровано</td><td>Isaac_Sim_Align_By_Pattern.py — досі окремий скрипт, не кнопка в UI</td></tr>
+          <tr><td><span class="status-dot done"></span>Done</td><td>Category export STRUCTURE/ASSET/CAMERA/LIGHT from the Max panel</td></tr>
+          <tr><td><span class="status-dot done"></span>Done</td><td>VRay light encoding in a name + decoding back into UsdLux</td></tr>
+          <tr><td><span class="status-dot done"></span>Done</td><td>Auto Populate of assets from the library, with name normalization</td></tr>
+          <tr><td><span class="status-dot done"></span>Done</td><td>UCX colliders, glass shadow disabling, texture relinking</td></tr>
+          <tr><td><span class="status-dot done"></span>Done</td><td>Model Bridge — single model, transform and bbox measurement</td></tr>
+          <tr><td><span class="status-dot pending"></span>Not integrated</td><td>Isaac_Sim_Align_By_Pattern.py — still a standalone script, not a UI button</td></tr>
         </tbody>
       </table>
     </div>
@@ -632,7 +640,7 @@
   <hr class="rule">
 
   <footer>
-    <p>Physicl Isaac Bridge · внутрішній інструмент · документ станом на 21 вересня 2026</p>
+    <p>Physicl Isaac Bridge · internal tool · document as of September 21, 2026</p>
   </footer>
 
 </main>
