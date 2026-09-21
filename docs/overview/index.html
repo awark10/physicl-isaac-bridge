@@ -235,6 +235,24 @@
   .dist-item p b { color: var(--text); }
   .dist-item code { background: var(--mono-bg); padding: 1px 5px; border-radius: 2px; font-size: 0.88em; color: var(--text); }
 
+  /* video cards */
+  .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 26px; }
+  .video-card { background: var(--surface); display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+  .video-card .thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; background: var(--mono-bg); }
+  .video-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.85); transition: filter .15s ease, transform .15s ease; }
+  .video-card:hover .thumb img { filter: saturate(1); transform: scale(1.03); }
+  .video-card .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .video-card .play span {
+    width: 46px; height: 46px; border-radius: 50%; background: rgba(15,21,19,0.55);
+    display: flex; align-items: center; justify-content: center; backdrop-filter: blur(1px);
+  }
+  .video-card .play svg { width: 16px; height: 16px; fill: #f2efe9; margin-left: 2px; }
+  .video-card .meta { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .video-card .kicker { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .video-card h4 { font-family: 'IBM Plex Sans'; font-size: 14.5px; font-weight: 600; margin: 0; }
+  .video-card p { margin: 0; font-size: 13px; color: var(--text-muted); flex: 1; }
+  .video-card .link { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--accent); margin-top: 2px; }
+
   footer { border-top: 1px solid var(--border); margin-top: 48px; padding-block: 20px 40px; }
   footer p { margin: 0; font-size: 12.5px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
 
@@ -243,6 +261,7 @@
     .handoff .arrowcell { flex-direction: row; padding: 10px 4px; }
     .handoff .arrowcell .glyph { transform: rotate(90deg); }
     .effect-grid { grid-template-columns: 1fr; }
+    .video-grid { grid-template-columns: 1fr; }
     .step { grid-template-columns: 28px 1fr; }
     section.chapter h2 { font-size: 25px; }
   }
@@ -266,6 +285,7 @@
       <a href="#ch-06" data-n="6">06 QA Conventions</a>
       <a href="#ch-07" data-n="7">07 Quirks</a>
       <a href="#ch-08" data-n="8">08 Files & State</a>
+      <a href="#ch-09" data-n="9">09 Videos</a>
     </nav>
   </div>
 </header>
@@ -634,6 +654,42 @@
           <tr><td><span class="status-dot pending"></span>Not integrated</td><td>Isaac_Sim_Align_By_Pattern.py — still a standalone script, not a UI button</td></tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 09 -->
+  <section class="chapter" id="ch-09">
+    <span class="chnum">09</span>
+    <h2>Demo videos</h2>
+    <p class="intro">Two short recordings from the author's own channel — installing the bridge, and an early build of the pipeline in action.</p>
+
+    <div class="video-grid">
+      <a class="video-card" href="https://youtu.be/RD9eGDUx1iM" target="_blank" rel="noopener noreferrer">
+        <div class="thumb">
+          <img src="thumb-isaac-install.jpg" alt="Isaac Bridge Install — video preview" loading="lazy">
+          <div class="play"><span><svg viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z"/></svg></span></div>
+        </div>
+        <div class="meta">
+          <span class="kicker">Install</span>
+          <h4>Isaac Bridge Install</h4>
+          <p>Setting up the MAXScript tools and the Isaac Sim extensions before the first export.</p>
+          <span class="link">youtu.be/RD9eGDUx1iM ↗</span>
+        </div>
+      </a>
+      <a class="video-card" href="https://youtu.be/vVtilxFSObg" target="_blank" rel="noopener noreferrer">
+        <div class="thumb">
+          <img src="thumb-isaac-bridge02.jpg" alt="Nfinite to Isaac bridge 0.2 — video preview" loading="lazy">
+          <div class="play"><span><svg viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z"/></svg></span></div>
+        </div>
+        <div class="meta">
+          <span class="kicker">Early build · v0.2</span>
+          <h4>Nfinite to Isaac bridge 0.2</h4>
+          <p>The pipeline at an earlier stage, under its original studio name.</p>
+          <span class="link">youtu.be/vVtilxFSObg ↗</span>
+        </div>
+      </a>
     </div>
   </section>
 
