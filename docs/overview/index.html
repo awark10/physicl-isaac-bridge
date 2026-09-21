@@ -206,6 +206,16 @@
   .effect p { margin: 0; font-size: 13.5px; color: var(--text-muted); flex: 1; }
   .effect .params { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); background: var(--mono-bg); padding: 8px 10px; border-radius: 2px; line-height: 1.6; }
 
+  /* ---------- interface screenshots ---------- */
+  .screenshot { margin-top: 24px; border: 1px solid var(--border); background: var(--surface); }
+  .screenshot .shot-frame { display: flex; justify-content: center; padding: 22px; background: var(--mono-bg); }
+  .screenshot .shot-frame img { max-width: 100%; height: auto; box-shadow: 0 0 0 1px var(--border); }
+  .screenshot.narrow .shot-frame img { max-width: 300px; }
+  .screenshot .caption {
+    padding: 10px 16px; font-size: 12px; color: var(--text-muted);
+    border-top: 1px solid var(--border); font-family: 'IBM Plex Mono', monospace;
+  }
+
   .tbl-wrap { overflow-x: auto; margin-top: 22px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
   thead th {
@@ -417,6 +427,11 @@
       revert happens both manually (multiplying the matrix back) and through <code>fetchMaxFile</code>
       — deliberate redundancy after a past bug with "gigantic objects" (see chapter 07).
     </div>
+
+    <div class="screenshot narrow">
+      <div class="shot-frame"><img src="max-interface.png" alt="The Nfinite Isaac Tools panel in 3ds Max, showing the Model Export and Scene Export button groups"></div>
+      <p class="caption">The panel as it looks in Max — Model Export on top, the four Scene Export buttons below</p>
+    </div>
   </section>
 
   <hr class="rule">
@@ -548,6 +563,11 @@
       <b>SMART AUTO POPULATE</b> and <b>RELINK ALL SCENE TEXTURES</b> operate on the whole scene
       (<code>/World/ASSET</code>), while the same-named buttons in Model Bridge act only on the
       current selection.
+    </div>
+
+    <div class="screenshot">
+      <div class="shot-frame"><img src="isaac-interface.png" alt="The Scene Bridge & Aligner window next to the embedded Nfnt Model To Isaac Bridge window in Isaac Sim"></div>
+      <p class="caption">Scene Bridge & Aligner (left) with the embedded Model Bridge sub-tool (right), as they appear in Isaac Sim</p>
     </div>
   </section>
 
